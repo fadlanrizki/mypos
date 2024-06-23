@@ -16,5 +16,5 @@ model User {
   name     String  @db.VarChar(100)
   token    String? @db.VarChar(100)
 
-  @@map("users")
+  // @@map("users")
 }
