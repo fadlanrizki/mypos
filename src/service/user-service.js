@@ -32,7 +32,7 @@ const register = async (request) => {
 };
 
 const login = async (request) => {
-  const loginRequest = validate(loginUserValidation, request);
+  const loginRequest = validate(registerUserValidation, request);
 
   const user = await prisma.user.findUnique({
     where: {
@@ -42,27 +42,29 @@ const login = async (request) => {
       username: true,
       password: true
     }
-  });
+  })
 
   if (!user) {
-    throw new ResponseError(401, "Username Or Password Wrong");
+    throw new ResponseError(401, "Username Or Password Wrong !");
   }
-
 
   const isPasswordValid = await bcrypt.compare(loginRequest.password, user.password);
-  if (!isPasswordValid) {
-    throw new ResponseError(401, "Username Or Password Wrong");
+  if (isPasswordValid) {
+    const token = uuid().toString();
+    return prisma.user.update({
+      data: {
+        token: token
+      },
+      where: {
+        username: user.username
+      },
+      select: {
+        token: true
+      }
+    })
   }
 
-  const token = uuid().toString();
 
-  return prisma.user.create({
-    data: user,
-    select: {
-      username: true,
-      name: true,
-    },
-  });
-};
+}
 
-export default { register };
+export default { register, login };

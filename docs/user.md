@@ -33,7 +33,7 @@ Response Body Error :
 ```
 
 ## Login User API
-Endpoint : /api/users/login
+Endpoint : POST /api/users/login
 
 Request Body : 
 
@@ -96,7 +96,7 @@ Response Body Errors:
 
 
 ## Get User API
-Endpoint : PATCH /api/users/current
+Endpoint : GET /api/users/current
 
 Header : 
 - Authorization: token
