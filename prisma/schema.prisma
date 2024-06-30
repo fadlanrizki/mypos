@@ -10,11 +10,76 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model User {
-  username String  @id @db.VarChar(100)
-  password String  @db.VarChar(100)
-  name     String  @db.VarChar(100)
-  token    String? @db.VarChar(100)
+// model User {
+//   username String  @id @db.VarChar(100)
+//   password String  @db.VarChar(100)
+//   name     String  @db.VarChar(100)
+//   token    String? @db.VarChar(100)
 
-  // @@map("users")
+//   // @@map("users")
+// }
+
+model Store {
+  store_id   Int      @id @default(autoincrement())
+  nama_toko  String   @db.VarChar(255)
+  alamat     String?  @db.Text
+  telepon    String?  @db.VarChar(20)
+  email      String?  @db.VarChar(255)
+  website    String?  @db.VarChar(255)
+  pemilik    String?  @db.VarChar(255)
+  Users      User[]
+  Transactions Transaction[]
+}
+
+model User {
+  user_id  Int    @id @default(autoincrement())
+  username String @unique @db.VarChar(50)
+  password String @db.VarChar(255)
+  nama     String @db.VarChar(100)
+  role     Role
+  store_id Int
+  Store    Store @relation(fields: [store_id], references: [store_id])
+  Transactions Transaction[]
+  token    String? @db.VarChar(100)
+}
+
+model Product {
+  product_id  Int     @id @default(autoincrement())
+  nama_produk String  @db.VarChar(255)
+  harga       Float
+  stok        Int
+  deskripsi   String? @db.Text
+  TransactionDetails TransactionDetail[]
+}
+
+model Transaction {
+  transaction_id Int      @id @default(autoincrement())
+  tanggal        DateTime
+  total_harga    Float
+  user_id        Int
+  store_id       Int
+  tipe_diskon    String?  @db.VarChar(50)
+  nilai_diskon   Float?
+  total_diskon   Float?
+  amount_paid    Float
+  change_amount  Float
+  User           User      @relation(fields: [user_id], references: [user_id])
+  Store          Store     @relation(fields: [store_id], references: [store_id])
+  TransactionDetails TransactionDetail[]
+}
+
+model TransactionDetail {
+  detail_id     Int     @id @default(autoincrement())
+  transaction_id Int
+  product_id     Int
+  quantity       Int
+  harga_satuan   Float
+  subtotal       Float
+  Transaction    Transaction @relation(fields: [transaction_id], references: [transaction_id])
+  Product        Product     @relation(fields: [product_id], references: [product_id])
+}
+
+enum Role {
+  admin
+  kasir
 }
